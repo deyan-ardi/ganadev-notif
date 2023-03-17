@@ -3,7 +3,7 @@
 namespace DeyanArdi\GanadevNotif;
 
 use Exception;
-use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Client;
 
 class GanadeApiService
 {
@@ -29,12 +29,11 @@ class GanadeApiService
     protected $api_url;
     protected $httpclient;
 
-    public function __construct(ClientInterface $httpclient)
+    public function __construct()
     {
         $this->api_status = config('ganadevnotif.api_status');
         $this->api_token = config('ganadevnotif.api_token');
         $this->api_url = "https://sv1.notif.ganadev.com";
-        $this->httpclient = $httpclient;
     }
 
 
@@ -48,7 +47,8 @@ class GanadeApiService
                 'html' => $text,
             ];
             $url = $this->api_url . '/email/send/message';
-            $response = $this->httpclient->request(
+            $client = new Client();
+            $response = $client->request(
                 'POST',
                 $url,
                 [
@@ -89,7 +89,8 @@ class GanadeApiService
                 'link' => $link,
             ];
             $url = $this->api_url . '/email/send/media';
-            $response = $this->httpclient->request(
+            $client = new Client();
+            $response = $client->request(
                 'POST',
                 $url,
                 [
@@ -127,7 +128,8 @@ class GanadeApiService
                 'pesan' => $message,
             ];
             $url = $this->api_url . '/whatsapp/send/message';
-            $response = $this->httpclient->request(
+            $client = new Client();
+            $response = $client->request(
                 'POST',
                 $url,
                 [
@@ -167,7 +169,8 @@ class GanadeApiService
                 'link' => $file,
             ];
             $url = $this->api_url . '/whatsapp/send/media';
-            $response = $this->httpclient->request(
+            $client = new Client();
+            $response = $client->request(
                 'POST',
                 $url,
                 [
@@ -203,7 +206,8 @@ class GanadeApiService
                 'apiToken' => $this->api_token,
             ];
             $url = $this->api_url . '/target-api/single';
-            $response = $this->httpclient->request(
+            $client = new Client();
+            $response = $client->request(
                 'POST',
                 $url,
                 [
@@ -240,7 +244,8 @@ class GanadeApiService
                 'apiToken' => $this->api_token,
             ];
             $url = $this->api_url . '/app-access/single';
-            $response = $this->httpclient->request(
+            $client = new Client();
+            $response = $client->request(
                 'POST',
                 $url,
                 [

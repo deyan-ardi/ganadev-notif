@@ -19,8 +19,5 @@ class GanadevServiceProvider extends ServiceProvider
     {
         $this->app->alias(GanadevApiService::class, 'ganadevnotif');
         $this->mergeConfigFrom(__DIR__ . '/../config/ganadevnotif.php', 'ganadevnotif');
-        $this->app->bind(ClientInterface::class, function ($app) {
-            return new GuzzleHttp\Client();
-        });
     }
 }
