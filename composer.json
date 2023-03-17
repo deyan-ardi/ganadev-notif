@@ -31,7 +31,10 @@
         "laravel": {
             "providers": [
                 "DeyanArdi\\GanadevNotif\\GanadevServiceProvider"
-            ]
+            ],
+            "config": {
+                "path": "config/ganadevnotif.php"
+            }
         }
     }
 }
