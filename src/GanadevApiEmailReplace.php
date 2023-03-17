@@ -58,7 +58,7 @@ class GanadevApiEmailReplace
                     } else {
                         $replaceConfig = $this->replaceConfig();
                         if ($replaceConfig) {
-                            logger('GanadevNotifReplaceEmail = SUCCESS');
+                            logger('GanadevNotifReplaceEmail = SUCCESS, new Config = ' . $config_email);
                         } else {
                             logger('GanadevNotifReplaceEmail = FAILED');
                         }
