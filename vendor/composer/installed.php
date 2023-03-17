@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => NULL,
+        'reference' => '43c71233d985fda7d6f5ccd568c012ebf6e99bda',
         'name' => 'deyan-ardi/ganadev-notif',
         'dev' => true,
     ),
     'versions' => array(
         'deyan-ardi/ganadev-notif' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => NULL,
+            'reference' => '43c71233d985fda7d6f5ccd568c012ebf6e99bda',
             'dev_requirement' => false,
         ),
         'doctrine/inflector' => array(
