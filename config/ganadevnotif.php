@@ -12,7 +12,7 @@ return [
     | is not good
     |
     */
-    'api_status' => env('GANADEV_NOTIF_STATUS', true),
+    'api_email_status' => env('GANADEV_EMAIL_STATUS', true),
     /*
     |--------------------------------------------------------------------------
     |  Length of the generated OTP

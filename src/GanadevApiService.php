@@ -15,11 +15,11 @@ class GanadevApiService
     protected $api_token;
 
     /**
-     * API Status
+     * API Email Status
      *
      * @var bool
      */
-    protected $api_status;
+    protected $api_email_status;
 
     /**
      * API URL
@@ -31,7 +31,7 @@ class GanadevApiService
 
     public function __construct()
     {
-        $this->api_status = config('ganadevnotif.api_status');
+        $this->api_email_status = config('ganadevnotif.api_email_status');
         $this->api_token = config('ganadevnotif.api_token');
         $this->api_url = "https://sv1.notif.ganadev.com";
     }
