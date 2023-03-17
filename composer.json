@@ -1,6 +1,6 @@
 {
     "name": "deyan-ardi/ganadev-notif",
-    "description": "Laravel package to used to simplify the process of connecting applications developed with the GanaDev Com blast notification server",
+    "description": "Laravel Ganadev Notification Service is a Laravel package that is used to help speed up the integration process between the applications you are developing with the Ganadev Notification Sender API. This package includes ready-to-use functions that really help your work process, so you don't need to do it manually anymore",
     "type": "library",
     "license": "MIT",
     "autoload": {
