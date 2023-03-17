@@ -1,6 +1,6 @@
 {
     "name": "deyan-ardi/ganadev-notif",
-    "description": "Library used to simplify the process of connecting applications developed with the GanaDev Com blast notification server",
+    "description": "Laravel package to used to simplify the process of connecting applications developed with the GanaDev Com blast notification server",
     "type": "library",
     "license": "MIT",
     "autoload": {
