@@ -10,7 +10,7 @@ class GanadevServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../../config/ganadevnotif.php' => config_path('ganadevnotif.php'),
+                __DIR__ . '/../config/ganadevnotif.php' => config_path('ganadevnotif.php'),
             ], 'config');
         }
     }

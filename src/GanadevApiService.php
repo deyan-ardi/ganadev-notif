@@ -5,7 +5,7 @@ namespace DeyanArdi\GanadevNotif;
 use Exception;
 use GuzzleHttp\Client;
 
-class GanadeApiService
+class GanadevApiService
 {
     /**
      * API Token
