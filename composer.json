@@ -15,6 +15,9 @@
         "ganadev-notif",
         "Laravel"
     ],
+    "config": {
+        "sort-packages": true
+    },
     "authors": [
         {
             "name": "deyan-ardi",
