@@ -1,0 +1,39 @@
+{
+    "name": "deyan-ardi/ganadev-notif",
+    "description": "Library used to simplify the process of connecting applications developed with the GanaDev Com blast notification server",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "DeyanArdi\\GanadevNotif\\": "src/"
+        }
+    },
+    "keywords": [
+        "deyan",
+        "deyan-ardi",
+        "ganadev",
+        "ganadev-notif",
+        "Laravel"
+    ],
+    "authors": [
+        {
+            "name": "deyan-ardi",
+            "email": "riyan.clsg11@gmail.com",
+            "homepage": "https://ganadev.com",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.3|7.4|^8.0",
+        "illuminate/support": "9.x-dev",
+        "guzzlehttp/guzzle": "7.5.x-dev"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DeyanArdi\\GanadevNotif\\GanadevServiceProvider"
+            ]
+        }
+    }
+}
