@@ -2,7 +2,7 @@
 
 namespace DeyanArdi\GanadevNotif;
 
-use Exception;
+use Illuminate\Support\Facades\Config;
 
 class GanadevApiEmailReplace
 {
@@ -25,7 +25,7 @@ class GanadevApiEmailReplace
      *
      * @var string
      */
-    protected $ganadev_key = __DIR__ . '/../ganadev.key.json';
+    protected $ganadev_key = __DIR__ . '/../ganadevkey.json';
 
     public function __construct()
     {
