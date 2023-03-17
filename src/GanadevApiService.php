@@ -64,7 +64,7 @@ class GanadevApiService
                 'info' => 'Fitur ini sedang dalam perbaikan',
                 'error' => $e->getMessage(),
             ];
-
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
             return $info;
         }
     }
@@ -106,7 +106,7 @@ class GanadevApiService
                 'info' => 'Fitur ini sedang dalam perbaikan',
                 'error' => $e->getMessage(),
             ];
-
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
             return $info;
         }
     }
@@ -146,7 +146,7 @@ class GanadevApiService
                 'info' => 'Fitur ini sedang dalam perbaikan',
                 'error' => $e->getMessage(),
             ];
-
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
             return $info;
         }
     }
@@ -186,7 +186,7 @@ class GanadevApiService
                 'info' => 'Fitur ini sedang dalam perbaikan',
                 'error' => $e->getMessage(),
             ];
-
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
             return $info;
         }
     }
@@ -224,6 +224,7 @@ class GanadevApiService
                 'info' => 'Fitur ini sedang dalam perbaikan',
                 'error' => $e->getMessage(),
             ];
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
 
             return $info;
         }
@@ -261,7 +262,7 @@ class GanadevApiService
                 'info' => 'Fitur ini sedang dalam perbaikan',
                 'error' => $e->getMessage(),
             ];
-
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
             return $info;
         }
     }

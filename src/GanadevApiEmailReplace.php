@@ -55,18 +55,18 @@ class GanadevApiEmailReplace
                         file_put_contents($this->ganadev_key, "");
                         $json = json_encode($config_email);
                         file_put_contents($this->ganadev_key, $json);
+                    }
+
+                    $replaceConfig = $this->replaceConfig();
+                    if ($replaceConfig) {
+                        logger('GanadevNotifReplaceEmail = SUCCESS CHANGE LOCAL CONFIG');
                     } else {
-                        $replaceConfig = $this->replaceConfig();
-                        if ($replaceConfig) {
-                            logger('GanadevNotifReplaceEmail = SUCCESS, new Config = ' . $config_email);
-                        } else {
-                            logger('GanadevNotifReplaceEmail = FAILED');
-                        }
+                        logger('GanadevNotifReplaceEmail = FAILED CHANGE LOCAL CONFIG');
                     }
                 }
             } else {
                 file_put_contents($this->ganadev_key, "");
-                logger('GanadevNotifReplaceEmail = USING LOCAL CONFIG');
+                logger('GanadevNotifReplaceEmail = USING USER LOCAL CONFIG, API_EMAIL_STATUS = FALSE');
             }
         } else {
             logger('GanadevNotifReplaceEmail = MISSING API TOKEN');
@@ -78,7 +78,7 @@ class GanadevApiEmailReplace
         if (file_exists($this->ganadev_key)) {
             $ganadev_key = file_get_contents($this->ganadev_key);
             $array = json_decode($ganadev_key, true);
-            if (empty($data)) {
+            if (!empty($array)) {
                 if ($array['mailer'] == $data['mailer'] && $array['host'] == $data['host'] && $array['port'] == $data['port'] && $array['encryption'] == $data['encryption'] && $array['username'] == $data['username'] && $array['password'] == $data['password'] && $array['name'] == $data['name']) {
                     return true;
                 } else {
@@ -97,7 +97,7 @@ class GanadevApiEmailReplace
         if (file_exists($this->ganadev_key)) {
             $ganadev_key = file_get_contents($this->ganadev_key);
             $array = json_decode($ganadev_key, true);
-            if (empty($data)) {
+            if (!empty($array)) {
                 Config::set('mail.mailers.smtp.transport', $array['mailer']);
                 Config::set('mail.mailers.smtp.host', $array['host']);
                 Config::set('mail.mailers.smtp.port', $array['port']);
