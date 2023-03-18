@@ -14,7 +14,6 @@ class GanadevApiService
      */
     protected $api_token;
 
-
     /**
      * API URL
      *
@@ -22,172 +21,208 @@ class GanadevApiService
      */
     protected $api_url;
 
+    /**
+     * WhatsApp API Status
+     *
+     *  @var string
+     */
+    protected $api_wa_status;
+
+    /**
+     * Email API Status
+     *
+     *  @var string
+     */
+    protected $api_email_status;
+
     public function __construct()
     {
         $this->api_token = config('ganadevnotif.api_token');
-        $this->api_url = "https://sv1.notif.ganadev.com";
+        $this->api_url = config('ganadevnotif.api_url');
+        $this->api_wa_status = config('ganadevnotif.api_wa_status');
+        $this->api_email_status = config('ganadevnotif.api_email_status');
     }
 
 
     public function sendMailMessage($to, $subject, $text)
     {
         try {
-            $data = [
-                'apiToken' => $this->api_token,
-                'to' => $to,
-                'subject' => $subject,
-                'html' => $text,
-            ];
-            $url = $this->api_url . '/email/send/message';
-            $client = new Client();
-            $response = $client->request(
-                'POST',
-                $url,
-                [
-                    // don't forget to set the header
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                    ],
-                    'body' => json_encode($data),
-                ]
-            );
-            $body = json_decode($response->getBody(), true);
+            if ($this->api_email_status == true) {
 
-            return $body;
+                $data = [
+                    'apiToken' => $this->api_token,
+                    'to' => $to,
+                    'subject' => $subject,
+                    'html' => $text,
+                ];
+                $url = $this->api_url . '/email/send/message';
+                $client = new Client();
+                $response = $client->request(
+                    'POST',
+                    $url,
+                    [
+                        // don't forget to set the header
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                        ],
+                        'body' => json_encode($data),
+                    ]
+                );
+                $body = json_decode($response->getBody(), true);
+
+                return $body;
+            }
+
+            logger('GanadevNotifAPI: Failed Send Request, Error: API WA STATUS DISABLED');
+            return [
+                'status' => 400,
+                'info' => 'Bad Request',
+                'error' => 'Pelase Set API Email Status To True',
+            ];
         } catch (Exception $e) {
-            $info = [
-                'status' => '500',
-                'data' => [
-                    'waNotifStatus' => 0,
-                    'emailNotifStatus' => 0,
-                ],
-                'info' => 'Fitur ini sedang dalam perbaikan',
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
+            return  [
+                'status' => 500,
+                'info' => 'Internal Server Error',
                 'error' => $e->getMessage(),
             ];
-            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-            return $info;
         }
     }
 
     public function sendMailMedia($to, $subject, $text, $filename, $link)
     {
         try {
-            $data = [
-                'apiToken' => $this->api_token,
-                'to' => $to,
-                'subject' => $subject,
-                'html' => $text,
-                'filename' => $filename,
-                'link' => $link,
-            ];
-            $url = $this->api_url . '/email/send/media';
-            $client = new Client();
-            $response = $client->request(
-                'POST',
-                $url,
-                [
-                    // don't forget to set the header
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                    ],
-                    'body' => json_encode($data),
-                ]
-            );
-            $body = json_decode($response->getBody(), true);
+            if ($this->api_email_status == true) {
 
-            return $body;
+                $data = [
+                    'apiToken' => $this->api_token,
+                    'to' => $to,
+                    'subject' => $subject,
+                    'html' => $text,
+                    'filename' => $filename,
+                    'link' => $link,
+                ];
+                $url = $this->api_url . '/email/send/media';
+                $client = new Client();
+                $response = $client->request(
+                    'POST',
+                    $url,
+                    [
+                        // don't forget to set the header
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                        ],
+                        'body' => json_encode($data),
+                    ]
+                );
+                $body = json_decode($response->getBody(), true);
+
+                return $body;
+            }
+
+            logger('GanadevNotifAPI: Failed Send Request, Error: API EMAIL STATUS DISABLED');
+            return [
+                'status' => 400,
+                'info' => 'Bad Request',
+                'error' => 'Pelase Set API Email Status To True',
+            ];
         } catch (Exception $e) {
-            $info = [
-                'status' => '500',
-                'data' => [
-                    'waNotifStatus' => 0,
-                    'emailNotifStatus' => 0,
-                ],
-                'info' => 'Fitur ini sedang dalam perbaikan',
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
+            return  [
+                'status' => 500,
+                'info' => 'Internal Server Error',
                 'error' => $e->getMessage(),
             ];
-            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-            return $info;
         }
     }
 
     public function sendWaMessage($receiver, $message)
     {
         try {
-            $data = [
-                'apiToken' => $this->api_token,
-                'no_hp' => intval('62' . $receiver), //include string 62 to the front of user's phone number
-                'pesan' => $message,
+            if ($this->api_wa_status == true) {
+
+                $data = [
+                    'apiToken' => $this->api_token,
+                    'no_hp' => intval('62' . $receiver), //include string 62 to the front of user's phone number
+                    'pesan' => $message,
+                ];
+                $url = $this->api_url . '/whatsapp/send/message';
+                $client = new Client();
+                $response = $client->request(
+                    'POST',
+                    $url,
+                    [
+                        // don't forget to set the header
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                        ],
+                        'body' => json_encode($data),
+                    ]
+                );
+
+                $body = json_decode($response->getBody(), true);
+
+                return $body;
+            }
+
+            logger('GanadevNotifAPI: Failed Send Request, Error: API WA STATUS DISABLED');
+            return [
+                'status' => 400,
+                'info' => 'Bad Request',
+                'error' => 'Pelase Set API WA Status To True',
             ];
-            $url = $this->api_url . '/whatsapp/send/message';
-            $client = new Client();
-            $response = $client->request(
-                'POST',
-                $url,
-                [
-                    // don't forget to set the header
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                    ],
-                    'body' => json_encode($data),
-                ]
-            );
-
-            $body = json_decode($response->getBody(), true);
-
-            return $body;
         } catch (Exception $e) {
-            $info = [
-                'status' => '500',
-                'data' => [
-                    'waNotifStatus' => 0,
-                    'emailNotifStatus' => 0,
-                ],
-                'info' => 'Fitur ini sedang dalam perbaikan',
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
+            return  [
+                'status' => 500,
+                'info' => 'Internal Server Error',
                 'error' => $e->getMessage(),
             ];
-            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-            return $info;
         }
     }
 
     public function sendWaMedia($receiver, $file, $message)
     {
         try {
-            $data = [
-                'apiToken' => $this->api_token,
-                'no_hp' => (int) '62' . $receiver, //include string 62 to the front of user's phone number
-                'pesan' => $message,
-                'link' => $file,
-            ];
-            $url = $this->api_url . '/whatsapp/send/media';
-            $client = new Client();
-            $response = $client->request(
-                'POST',
-                $url,
-                [
-                    // don't forget to set the header
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                    ],
-                    'body' => json_encode($data),
-                ]
-            );
-            $body = json_decode($response->getBody(), true);
+            if ($this->api_wa_status == true) {
 
-            return $body;
+                $data = [
+                    'apiToken' => $this->api_token,
+                    'no_hp' => (int) '62' . $receiver, //include string 62 to the front of user's phone number
+                    'pesan' => $message,
+                    'link' => $file,
+                ];
+                $url = $this->api_url . '/whatsapp/send/media';
+                $client = new Client();
+                $response = $client->request(
+                    'POST',
+                    $url,
+                    [
+                        // don't forget to set the header
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                        ],
+                        'body' => json_encode($data),
+                    ]
+                );
+                $body = json_decode($response->getBody(), true);
+
+                return $body;
+            }
+
+            logger('GanadevNotifAPI: Failed Send Request, Error: API WA STATUS DISABLED');
+            return [
+                'status' => 400,
+                'info' => 'Bad Request',
+                'error' => 'Pelase Set API WA Status To True',
+            ];
         } catch (Exception $e) {
-            $info = [
-                'status' => '500',
-                'data' => [
-                    'waNotifStatus' => 0,
-                    'emailNotifStatus' => 0,
-                ],
-                'info' => 'Fitur ini sedang dalam perbaikan',
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
+            return  [
+                'status' => 500,
+                'info' => 'Internal Server Error',
                 'error' => $e->getMessage(),
             ];
-            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-            return $info;
         }
     }
 
@@ -214,19 +249,12 @@ class GanadevApiService
 
             return $body;
         } catch (Exception $e) {
-            // dd($e);
-            $info = [
-                'status' => '500',
-                'data' => [
-                    'waNotifStatus' => 0,
-                    'emailNotifStatus' => 0,
-                ],
-                'info' => 'Fitur ini sedang dalam perbaikan',
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
+            return  [
+                'status' => 500,
+                'info' => 'Internal Server Error',
                 'error' => $e->getMessage(),
             ];
-            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-
-            return $info;
         }
     }
 
@@ -253,17 +281,12 @@ class GanadevApiService
 
             return $body;
         } catch (Exception $e) {
-            $info = [
-                'status' => '500',
-                'data' => [
-                    'waNotifStatus' => 0,
-                    'emailNotifStatus' => 0,
-                ],
-                'info' => 'Fitur ini sedang dalam perbaikan',
+            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
+            return  [
+                'status' => 500,
+                'info' => 'Internal Server Error',
                 'error' => $e->getMessage(),
             ];
-            logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-            return $info;
         }
     }
 }

@@ -13,18 +13,18 @@ Laravel Ganadev Notification Service is a Laravel package that is used to help s
 ## Support Version
 | Laravel Version | Support |
 | --- | --- |
-| 4.2.x | No |
-| 5.x.x | No |
-| 6.x.x | No |
-| 7.x.x | Yes |
-| 8.x.x | Yes |
-| 9.x.x | Yes |
-| 10.x.x | Yes |
+| 4.2.x | `No` |
+| 5.x.x | `No` |
+| 6.x.x | `No` |
+| 7.x.x | `Yes` |
+| 8.x.x | `Yes` |
+| 9.x.x | `Yes` |
+| 10.x.x | `Yes` |
 
 ## System Requerements
 
-- PHP "^7.3|7.4|^8.0"
-- Guzzle HTTP (Default By Laravel, No Need To Install)
+- PHP Version "^7.3|7.4|^8.0|^8.1|^8.2"
+- Guzzle HTTP (Default By Laravel, Please install if missing from your Laravel)
 ## Installation
 - Open terminal, run this command
 ```php
@@ -36,16 +36,21 @@ php artisan vendor:publish --provider="DeyanArdi\GanadevNotif\GanadevServiceProv
 ```
 - Add this key in project `.env` file
 ```php
-GANADEV_EMAIL_STATUS = true // The default value for this configuration is `true`, you can change value to `false` if you want to use local email configuration.
+GANADEV_SERVER_MAIL_SETTING = true 
+GANADEV_MAIL_API_STATUS = true
+GANADEV_WA_API_STATUS = true
 GANADEV_NOTIF_TOKEN = "YOUR-API-TOKEN"
 ```
-## Ways of working
-- You must register the Email, WhatsApp Contact, and Other Configuration that you will use for sending notifications on the Ganadev Notification Sender API
-- Next, you will get an API Token which can be used to access the Ganadev Notification Sender API through your application
-- When you use the Ganadev Notification Sender API, the local email delivery configuration you are using will be automatically overwritten with the configuration you added to the Ganadev Notification Sender API.
-- You can still use your local email configuration by default when Ganadev Notification Sender API server is down or when you give false value to key GANADEV_NOTIF_STATUS in project .env file
-## Support
-To get an API Token for your application, you can contact the GanaDev Com via https://ganadev.com/kontak. Please prepare your email and WhatsApp number before register your application
+## How To Get API TOKEN
+- You must register the "Device" which contains the email and whatsapp configuration that you will use on the Ganadev Notification API. If you already have a registered "Device", you can skip this step.
+- Next, you must register the "App" that will use the "Device" that you have. You can have multiple "Apps" for each "Device" you have. Each "App" has a different "API TOKEN".
+- The "API TOKEN" of the application that you have registered, you can use to access the Ganadev Notification Sender API.
+- To get an API Token for your application, you can contact the GanaDev Com via https://ganadev.com/kontak. Please prepare your email and WhatsApp number before register your application
+## Disclaimer
+- When you use this package, the local email delivery configuration you are using will be automatically overwritten with the configuration you added to the Ganadev Notification Sender API.
+- You can still use your local email configuration by default when you change value key `GANADEV_SERVER_MAIL_SETTING = false` in project .env file
+- You can disabled Email or WhatsApp sender by change value of `GANADEV_MAIL_API_STATUS = false` or `GANADEV_WA_API_STATUS = false` in project .env file.
+- This package auto request to server Ganadev Notification Sender API every 15 minute to get fresh configuration. That mean, when you request change configuration in Ganadev Notification Sender API to Admin, your change will be affected by default 15 minutes later. You can change value of minute auto request by change value of `idle_time` in file `config/ganadevnotif.php`. We only give you option 15 minute, 30 minute, or 60 minute.
 ## How To Use
 ### Method Send Mail Message
 You can send email message (without image) using methode name `sendMailMessage`, this method required 3 paramaeters `send_to`,`subject`, and `message`. Example usage :
@@ -113,24 +118,23 @@ public function yourExampleFunction(){
 }
 
 ```
-
 ### Method Get Detail Device
-You can get detail of device you use by using method `getSingleDevice`, this method not required parameter. Example usage :
+The term "Device" means the configuration that contains your email and whatsapp data.You can get detail of device you use by using method `getSingleDevice`, this method not required parameter. Example usage :
 ```php
 use DeyanArdi\GanadevNotif\GanadevApi;
 
 public function yourExampleFunction(){
-    GanadevApi::getSingleDevice() // This method return detail of device by api token
+    GanadevApi::getSingleDevice() // This method return detail of your device using in app, this request using api token to get
 }
 
 ```
-### Method Get Status App
-You can get status app using method `getStatusApp`, this method not required parameter. Example usage :
+### Method Get Status And Detail App
+The term "App" means any application that accesses your "Device". You can get status app using method `getStatusApp`, this method not required parameter. Example usage :
 ```php
 use DeyanArdi\GanadevNotif\GanadevApi;
 
 public function yourExampleFunction(){
-    GanadevApi::getStatusApp() // This method return detail of device by api token
+    GanadevApi::getStatusApp() // This method return detail of your app, this request using api token to get data
 }
 
 ```
