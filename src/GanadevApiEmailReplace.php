@@ -168,7 +168,7 @@ class GanadevApiEmailReplace
                 }
             } else {
                 file_put_contents($this->getKey(), "");
-                logger('GanadevNotifReplaceEmail: USING USER LOCAL CONFIG, API_EMAIL_STATUS = FALSE');
+                logger('GanadevNotifReplaceEmail: USING USER LOCAL CONFIG, USING MAIL SERVER SETTING = FALSE');
             }
         } else {
             logger('GanadevNotifReplaceEmail: MISSING API TOKEN');

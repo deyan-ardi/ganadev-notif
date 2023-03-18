@@ -46,13 +46,22 @@ GANADEV_NOTIF_TOKEN = "YOUR-API-TOKEN"
 - Next, you must register the "App" that will use the "Device" that you have. You can have multiple "Apps" for each "Device" you have. Each "App" has a different "API TOKEN".
 - The "API TOKEN" of the application that you have registered, you can use to access the Ganadev Notification Sender API.
 - To get an API Token for your application, you can contact the GanaDev Com via https://ganadev.com/kontak. Please prepare your email and WhatsApp number before register your application
-## Disclaimer
-- When you use this package, the local email delivery configuration you are using will be automatically overwritten with the configuration you added to the Ganadev Notification Sender API.
-- You can still use your local email configuration by default when you change value key `GANADEV_SERVER_MAIL_SETTING = false` in project .env file
-- You can disabled Email or WhatsApp sender by change value of `GANADEV_MAIL_API_STATUS = false` or `GANADEV_WA_API_STATUS = false` in project .env file.
-- This package auto request to server Ganadev Notification Sender API every 15 minute to get fresh configuration. That mean, when you request change configuration in Ganadev Notification Sender API to Admin, your change will be affected by default 15 minutes later. You can change value of minute auto request by change value of `idle_time` in file `config/ganadevnotif.php`. We only give you option 15 minute, 30 minute, or 60 minute.
+
 ## How To Use
-### Method Send Mail Message
+
+### Integration With Auth or Email Send Method
+When you create an email sending feature like in Laravel Auth or Laravel's default Email sending method, by default Laravel uses the `smtp` email configuration available in `config/mail.php` for sending. This means you have to add the `smtp` configuration in your application locale in order to use the email sending functionality in Laravel.
+
+This package makes it easier for you by providing overwriting options on your local configuration using the configuration you have added to the Ganadev Notification Sender API. You can enable this function by changing the `GANADEV_SERVER_MAIL_SETTING = true` configuration.
+
+That way, every time you send an email, either in Laravel Auth or Laravel's default Email sending method. Then the email configuration used is the configuration from the Ganadev Notification Sender API server. Later, if you make changes to your email configuration, you can simply change it to the "Device" on the Ganadev Notification Sender API server, so all your "Apps" that use the "Device" will be updated too. Another advantage, you no longer need to fear that your email configuration will be known by other people, because your email configuration is separate from your application.
+
+Finally, if you activate this function, by default this package will automatically make a request to the Ganadev Notification Sender API server every 15 minutes. This means, if later you make changes to the "Device" on the Ganadev Notification Sender API server. The change will be felt 15 minutes later. You can change the configuration in the `idle_time` configuration in the `config/ganadevnotif.php` file. We provide default options, namely requests every 15 minutes, 30 minutes, or 60 minutes.
+
+### Enabled Disabled API Method
+- You can disabled Email or WhatsApp API Method by change value of `GANADEV_MAIL_API_STATUS = false` or `GANADEV_WA_API_STATUS = false` in project .env file.
+- If API Disabled, the method will return `Error 400: Bad Request`, you must handle the view of this error.
+### Send Mail Message (Without Image or Other Media)
 You can send email message (without image) using methode name `sendMailMessage`, this method required 3 paramaeters `send_to`,`subject`, and `message`. Example usage :
 
 ```php
@@ -72,7 +81,7 @@ public function yourExampleFunction(){
 }
 
 ```
-### Method Send Mail Media
+###  Send Mail Media (With Image or Other Media)
 You can send email message (with image or other media) using methode name `sendMailMedia`, this method required 5 paramaeters `send_to`,`subject`,  `message`, `filename`, and `link`. Example usage :
 ```php
 use DeyanArdi\GanadevNotif\GanadevApi;
@@ -93,7 +102,7 @@ public function yourExampleFunction(){
 }
 
 ```
-### Method Send WhatsApp Message
+### Send WhatsApp Message (Without Image or Other Media)
 You can send whatsapp message (without image) using methode name `sendWaMessage`, this method required 2 paramaeters `send_to` and `message`. Example usage :
 ```php
 use DeyanArdi\GanadevNotif\GanadevApi;
@@ -105,7 +114,7 @@ public function yourExampleFunction(){
 }
 
 ```
-### Method Send WhatsApp Media
+### Send WhatsApp Media (With Image or Other Media)
 You can send whatsapp media (with image or other media) using methode name `sendWaMedia`, this method required 2 paramaeters `send_to`, `link`, and `message`. Example usage :
 ```php
 use DeyanArdi\GanadevNotif\GanadevApi;
@@ -118,7 +127,7 @@ public function yourExampleFunction(){
 }
 
 ```
-### Method Get Detail Device
+### Get "Device" Information
 The term "Device" means the configuration that contains your email and whatsapp data.You can get detail of device you use by using method `getSingleDevice`, this method not required parameter. Example usage :
 ```php
 use DeyanArdi\GanadevNotif\GanadevApi;
@@ -128,7 +137,7 @@ public function yourExampleFunction(){
 }
 
 ```
-### Method Get Status And Detail App
+### Get "App" Information
 The term "App" means any application that accesses your "Device". You can get status app using method `getStatusApp`, this method not required parameter. Example usage :
 ```php
 use DeyanArdi\GanadevNotif\GanadevApi;
