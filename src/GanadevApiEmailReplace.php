@@ -167,7 +167,9 @@ class GanadevApiEmailReplace
                     }
                 }
             } else {
-                file_put_contents($this->getKey(), "");
+                if ($this->getKey()) {
+                    file_put_contents($this->getKey(), "");
+                }
                 logger('GanadevNotifReplaceEmail: USING USER LOCAL CONFIG, USING MAIL SERVER SETTING = FALSE');
             }
         } else {
