@@ -130,11 +130,11 @@ class GanadevApiEmailReplace
         if (isset($this->api_token)) {
             if ($this->use_mail_server_setting == true) {
                 if ($this->checkValidSignatureFile()) {
-                    $replaceConfig = $this->replaceConfig();
+                    $replaceConfig = $this->replaceConfig("server");
                     if ($replaceConfig) {
-                        logger('GanadevNotifReplaceEmail: SUCCESS CHANGE LOCAL CONFIG');
+                        logger('GanadevNotifReplaceEmail: SUCCESS CHANGE LOCAL CONFIG WITH SERVER SETTINGS');
                     } else {
-                        logger('GanadevNotifReplaceEmail: FAILED CHANGE LOCAL CONFIG');
+                        logger('GanadevNotifReplaceEmail: FAILED CHANGE LOCAL CONFIG WITH SERVER SETTINGS');
                     }
                 } else {
                     $this->generateSignatureFile();
@@ -158,16 +158,23 @@ class GanadevApiEmailReplace
                             file_put_contents($this->getKey(), $json);
                         }
 
-                        $replaceConfig = $this->replaceConfig();
+                        $replaceConfig = $this->replaceConfig("server");
                         if ($replaceConfig) {
-                            logger('GanadevNotifReplaceEmail: SUCCESS CHANGE LOCAL CONFIG');
+                            logger('GanadevNotifReplaceEmail: SUCCESS CHANGE LOCAL CONFIG WITH SERVER SETTINGS');
                         } else {
-                            logger('GanadevNotifReplaceEmail: FAILED CHANGE LOCAL CONFIG');
+                            logger('GanadevNotifReplaceEmail: FAILED CHANGE LOCAL CONFIG WITH SERVER SETTINGS');
                         }
                     }
                 }
             } else {
-                file_put_contents($this->getKey(), "");
+                $this->removeKey();
+                file_put_contents($this->signature_file, "");
+                $replaceConfig = $this->replaceConfig("local");
+                if ($replaceConfig) {
+                    logger('GanadevNotifReplaceEmail: SUCCESS CHANGE LOCAL CONFIG WITH LOCAL SETTINGS');
+                } else {
+                    logger('GanadevNotifReplaceEmail: FAILED CHANGE LOCAL CONFIG WITH LOCAL SETTINGS');
+                }
                 logger('GanadevNotifReplaceEmail: USING USER LOCAL CONFIG, USING MAIL SERVER SETTING = FALSE');
             }
         } else {
@@ -194,26 +201,38 @@ class GanadevApiEmailReplace
         }
     }
 
-    public function replaceConfig()
+    public function replaceConfig(string $server)
     {
-        if (file_exists($this->getKey())) {
-            $ganadev_key = file_get_contents($this->getKey());
-            $array = json_decode($ganadev_key, true);
-            if (!empty($array)) {
-                Config::set('mail.mailers.smtp.transport', $array['mailer']);
-                Config::set('mail.mailers.smtp.host', $array['host']);
-                Config::set('mail.mailers.smtp.port', $array['port']);
-                Config::set('mail.mailers.smtp.encryption', $array['encryption']);
-                Config::set('mail.mailers.smtp.username', $array['username']);
-                Config::set('mail.mailers.smtp.password', $array['password']);
-                Config::set('mail.from.address', $array['username']);
-                Config::set('mail.from.name', $array['name']);
-                return true;
+        if ($server == "local") {
+            Config::set('mail.mailers.smtp.transport', env('MAIL_MAILER', 'smtp'));
+            Config::set('mail.mailers.smtp.host', env('MAIL_HOST', 'smtp.mailgun.org'));
+            Config::set('mail.mailers.smtp.port', env('MAIL_PORT', 587));
+            Config::set('mail.mailers.smtp.encryption', env('MAIL_ENCRYPTION', 'tls'));
+            Config::set('mail.mailers.smtp.username', env('MAIL_USERNAME'));
+            Config::set('mail.mailers.smtp.password', env('MAIL_PASSWORD'));
+            Config::set('mail.from.address', env('MAIL_USERNAME'));
+            Config::set('mail.from.name', env('MAIL_FROM_NAME', 'Example'),);
+            return true;
+        } else {
+            if (file_exists($this->getKey())) {
+                $ganadev_key = file_get_contents($this->getKey());
+                $array = json_decode($ganadev_key, true);
+                if (!empty($array)) {
+                    Config::set('mail.mailers.smtp.transport', $array['mailer']);
+                    Config::set('mail.mailers.smtp.host', $array['host']);
+                    Config::set('mail.mailers.smtp.port', $array['port']);
+                    Config::set('mail.mailers.smtp.encryption', $array['encryption']);
+                    Config::set('mail.mailers.smtp.username', $array['username']);
+                    Config::set('mail.mailers.smtp.password', $array['password']);
+                    Config::set('mail.from.address', $array['username']);
+                    Config::set('mail.from.name', $array['name']);
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
-        } else {
-            return false;
         }
     }
 }
