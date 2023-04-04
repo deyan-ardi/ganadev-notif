@@ -157,7 +157,7 @@ public function yourExampleFunction(){
 
 You can send whatsapp with other country number by send country code as params in method `sendWaMessage()` or `sendWaMedia()`
 
-````php
+```php
 use DeyanArdi\GanadevNotif\GanadevApi;
 
 public function yourExampleFunction(){
@@ -172,6 +172,7 @@ public function yourExampleFunction(){
     // If Send WhatsApp Media
     GanadevApi::sendWaMedia($send_to, $link, $message, $country_code)
 }
+```
 ### Get "Device" Information
 The term "Device" means the configuration that contains your email and whatsapp data.You can get detail of device you use by using method `getSingleDevice`, this method not required parameter. Example usage :
 ```php
@@ -181,7 +182,7 @@ public function yourExampleFunction(){
     GanadevApi::getSingleDevice() // This method return detail of your device using in app, this request using api token to get
 }
 
-````
+```
 
 ### Get "App" Information
 
