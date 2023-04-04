@@ -136,14 +136,18 @@ class GanadevApiService
         }
     }
 
-    public function sendWaMessage($receiver, $message)
+    public function sendWaMessage($receiver, $message, $kode_negara = null)
     {
         try {
             if ($this->api_wa_status == true) {
-
+                if (isset($kode_negara)) {
+                    $kode_negara = $kode_negara;
+                } else {
+                    $kode_negara = '62';
+                }
                 $data = [
                     'apiToken' => $this->api_token,
-                    'no_hp' => intval('62' . $receiver), //include string 62 to the front of user's phone number
+                    'no_hp' => intval($kode_negara . $receiver), //include string 62 to the front of user's phone number
                     'pesan' => $message,
                 ];
                 $url = $this->api_url . '/whatsapp/send/message';
@@ -181,14 +185,18 @@ class GanadevApiService
         }
     }
 
-    public function sendWaMedia($receiver, $file, $message)
+    public function sendWaMedia($receiver, $file, $message, $kode_negara = null)
     {
         try {
             if ($this->api_wa_status == true) {
-
+                if (isset($kode_negara)) {
+                    $kode_negara = $kode_negara;
+                } else {
+                    $kode_negara = '62';
+                }
                 $data = [
                     'apiToken' => $this->api_token,
-                    'no_hp' => (int) '62' . $receiver, //include string 62 to the front of user's phone number
+                    'no_hp' => intval($kode_negara . $receiver), //include string 62 to the front of user's phone number
                     'pesan' => $message,
                     'link' => $file,
                 ];
