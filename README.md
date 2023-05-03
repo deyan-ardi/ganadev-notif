@@ -6,7 +6,8 @@
 
 ## What Is Ganadev Notification Sender API?
 
-Ganadev Notification Sender is an API developed by GanaDev Com to simplify and support the process of sending notifications faster without disturbing the main application. The concept used in the development of this API is Microservice, your application sends a notification request via our API, and we will help send it to your users. With this concept, your application will have a much faster execution time than usual. Ganadev Notification Sender currently only supports sending notifications via Email and WhatsApp. You can view full documentation via the url https://sv1.notif.ganadev.com
+Ganadev Notification Sender is an API developed by GanaDev Com to simplify and support the process of sending notifications faster without disturbing the main application. The concept used in the development of this API is Microservice, your application sends a notification request via our API, and we will help send it to your users. With this concept, your application will have a much faster execution time than usual. Ganadev Notification Sender currently only supports sending notifications via Email and WhatsApp. 
+- GanaDev Com API Notification v3 URL => https://sv1.wa-api.ganadev.com/home
 
 ## What Is Laravel Ganadev Notification Service Package?
 
@@ -53,7 +54,7 @@ GANADEV_NOTIF_TOKEN = "YOUR-API-TOKEN"
 
 ## How To Get API TOKEN
 
-- Please contact GanaDev Com by this url https://ganadev.com/kontak. When your request approved, you will be get the account to login in GanaDev Com Notification API v3 (https://sv1.wa-api.ganadev.com)
+- Please contact GanaDev Com by this url https://ganadev.com/kontak. When your request approved, you will be get the account to login in GanaDev Com Notification API v3 (https://sv1.wa-api.ganadev.com/home)
 - Select the settings menu in the upper right corner 
 - In the API Key column is your API Token, Copy this to your .env as GANADEV_NOTIF_TOKEN
 
