@@ -140,16 +140,16 @@ class GanadevApiEmailReplace
                     $this->generateSignatureFile();
 
                     $con = new GanadevApiService();
-                    $get_mail_data = $con->getSingleDevice();
+                    $get_mail_data = $con->getDevice();
                     if ($get_mail_data['status'] == 200) {
                         $config_email = [
                             'mailer' => 'smtp',
-                            'host' => $get_mail_data['data']['appEmailHost'],
-                            'port' => $get_mail_data['data']['appEmailPort'],
-                            'encryption' => 'ssl',
-                            'username' => $get_mail_data['data']['appEmailUsername'],
-                            'password' => $get_mail_data['data']['appEmailPassword'],
-                            'name' => $get_mail_data['data']['appEmailFromName'],
+                            'host' => $get_mail_data['data']['app_email_host'],
+                            'port' => $get_mail_data['data']['app_email_port'],
+                            'encryption' => $get_mail_data['data']['app_email_port'] == "465" ? "ssl" : "tls",
+                            'username' => $get_mail_data['data']['app_email_username'],
+                            'password' => $get_mail_data['data']['app_email_password'],
+                            'name' => $get_mail_data['data']['app_email_from_name'],
                         ];
                         $checkIsSame = $this->checkDataIsSame($config_email);
                         if (!$checkIsSame) {

@@ -6,10 +6,21 @@ return [
     |  Ganadev API URL
     |--------------------------------------------------------------------------
     |
-    | By default = https://sv1.notif.ganadev.com, change it if API Url is not available
+    | By default = https://sv1.wa-api.ganadev.com, change it if API Url is not available
     |
     */
-    'api_url' => "https://sv1.notif.ganadev.com",
+    'api_url' => "https://sv1.wa-api.ganadev.com",
+
+    /*
+    |--------------------------------------------------------------------------
+    |  Ganadev API Device
+    |--------------------------------------------------------------------------
+    |
+    | Choose your Device, if dosnt exist please create a new one Device in 
+    | https://sv1.wa-api.ganadev.com, make sure device is connected
+    |
+    */
+    'api_device' => env('GANADEV_NOTIF_DEVICE', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -21,28 +32,6 @@ return [
     |
     */
     'api_token' => env('GANADEV_NOTIF_TOKEN', ''),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Ganadev Notification WhatsApp Status
-    |--------------------------------------------------------------------------
-    |
-    | By default = true, if false it means you cant use WhatsApp Notification Sender API. 
-    | This will be useful if you want to using Email Notification Sender only.
-    |
-    */
-    'api_wa_status' => env('GANADEV_WA_API_STATUS', true),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Ganadev Notification Email Status
-    |--------------------------------------------------------------------------
-    |
-    | By default = true, if false it means you cant use Email Notification Sender API. 
-    | This will be useful if you want to using WhatsApp Notification Sender only.
-    |
-    */
-    'api_email_status' => env('GANADEV_MAIL_API_STATUS', true),
 
     /*
     |--------------------------------------------------------------------------
