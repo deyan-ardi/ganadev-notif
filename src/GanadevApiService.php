@@ -39,7 +39,6 @@ class GanadevApiService
     public function sendMailMessage($to, $subject, $text)
     {
         try {
-
             $data = [
                 'api_key' => $this->api_token,
                 'sender' => $this->api_device,
