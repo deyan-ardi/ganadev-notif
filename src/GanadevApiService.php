@@ -149,17 +149,20 @@ class GanadevApiService
         }
     }
 
-    public function sendWaMedia($receiver, $file, $message, $type, $other = null)
+    public function sendWaMedia($receiver, $file, $type, $other = null)
     {
         try {
             $data = [
                 'api_key' => $this->api_token,
                 'sender' => $this->api_device,
                 'number' => intval($receiver), //include string 62 to the front of user's phone number
-                'caption' => $message,
                 'url' => $file,
                 'media_type' => $type,
             ];
+
+            if ($type == "image" || $type == "video") {
+                $data['caption'] = $other;
+            }
 
             if ($type == "audio") {
                 if (!isset($other)) {
