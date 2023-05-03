@@ -11,3 +11,15 @@ All notable changes to `Ganadev Notif` will be documented in this file
 
 ## 1.0.2
 - Remove send whatsapp to Indonesian Code only
+
+## 2.0.0
+- First integration with GanaDev API v3
+- Remove usuless Endpoint and Configuration
+  - Endpoint to check device status
+  - Configuration to disabled WA API
+  - Configuration to disabled Email API
+## 2.0.1
+- Bug Fixing when send whatsapp media
+
+## 2.0.2
+- Remove auto phone region code, now when use WhatsApp Endpoint, Phone number must be send with phone region code
