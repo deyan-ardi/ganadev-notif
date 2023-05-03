@@ -112,14 +112,14 @@ class GanadevApiService
         }
     }
 
-    public function sendWaMessage($receiver, $message, $phone_code = 62)
+    public function sendWaMessage($receiver, $message)
     {
         try {
 
             $data = [
                 'api_key' => $this->api_token,
                 'sender' => $this->api_device,
-                'number' => intval($phone_code . $receiver),
+                'number' => intval($receiver),
                 'message' => $message,
             ];
             $url = $this->api_url . '/api/wa/send-message';
@@ -149,13 +149,13 @@ class GanadevApiService
         }
     }
 
-    public function sendWaMedia($receiver, $file, $message, $phone_code = 62, $type, $other = null)
+    public function sendWaMedia($receiver, $file, $message, $type, $other = null)
     {
         try {
             $data = [
                 'api_key' => $this->api_token,
                 'sender' => $this->api_device,
-                'number' => intval($phone_code . $receiver), //include string 62 to the front of user's phone number
+                'number' => intval($receiver), //include string 62 to the front of user's phone number
                 'caption' => $message,
                 'url' => $file,
                 'media_type' => $type,
