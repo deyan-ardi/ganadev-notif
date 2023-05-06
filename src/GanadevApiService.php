@@ -28,6 +28,8 @@ class GanadevApiService
      */
     protected $api_device;
 
+
+
     public function __construct()
     {
         $this->api_token = config('ganadevnotif.api_token');
@@ -60,15 +62,16 @@ class GanadevApiService
                 ]
             );
             $body = json_decode($response->getBody(), true);
-
-            return $body;
+            $response = ParsedApiServices::parse($body);
+            return $response;
         } catch (Exception $e) {
             logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-            return  [
-                'status' => 500,
-                'info' => 'Internal Server Error',
-                'error' => $e->getMessage(),
+            $body = [
+                'status' => false,
+                'msg' => $e->getMessage(),
             ];
+            $response = ParsedApiServices::parse($body);
+            return $response;
         }
     }
 
@@ -100,15 +103,16 @@ class GanadevApiService
                 ]
             );
             $body = json_decode($response->getBody(), true);
-
-            return $body;
+            $response = ParsedApiServices::parse($body);
+            return $response;
         } catch (Exception $e) {
             logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-            return  [
-                'status' => 500,
-                'info' => 'Internal Server Error',
-                'error' => $e->getMessage(),
+            $body = [
+                'status' => false,
+                'msg' => $e->getMessage(),
             ];
+            $response = ParsedApiServices::parse($body);
+            return $response;
         }
     }
 
@@ -137,15 +141,16 @@ class GanadevApiService
             );
 
             $body = json_decode($response->getBody(), true);
-
-            return $body;
+            $response = ParsedApiServices::parse($body);
+            return $response;
         } catch (Exception $e) {
             logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-            return  [
-                'status' => 500,
-                'info' => 'Internal Server Error',
-                'error' => $e->getMessage(),
+            $body = [
+                'status' => false,
+                'msg' => $e->getMessage(),
             ];
+            $response = ParsedApiServices::parse($body);
+            return $response;
         }
     }
 
@@ -166,19 +171,21 @@ class GanadevApiService
 
             if ($type == "audio") {
                 if (!isset($other)) {
-                    return  [
-                        'status' => 400,
-                        'info' => 'Bad Request',
-                        'error' => "Required 1 parameter, other value is required if type is audio, true for voice note | false for audio",
+                    $body = [
+                        'status' => false,
+                        'msg' => "Required 1 parameter, other value is required if type is audio, true for voice note | false for audio",
                     ];
+                    $response = ParsedApiServices::parse($body);
+                    return $response;
                 }
 
                 if ($other != "true" && $type == "false") {
-                    return  [
-                        'status' => 400,
-                        'info' => 'Bad Request',
-                        'error' => "Value must be true for voice note or false for audio",
+                    $body = [
+                        'status' => false,
+                        'msg' => "Value must be true for voice note or false for audio",
                     ];
+                    $response = ParsedApiServices::parse($body);
+                    return $response;
                 }
 
                 $data['ppt'] = $other;
@@ -198,15 +205,16 @@ class GanadevApiService
                 ]
             );
             $body = json_decode($response->getBody(), true);
-
-            return $body;
+            $response = ParsedApiServices::parse($body);
+            return $response;
         } catch (Exception $e) {
             logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-            return  [
-                'status' => 500,
-                'info' => 'Internal Server Error',
-                'error' => $e->getMessage(),
+            $body = [
+                'status' => false,
+                'msg' => $e->getMessage(),
             ];
+            $response = ParsedApiServices::parse($body);
+            return $response;
         }
     }
 
@@ -231,15 +239,16 @@ class GanadevApiService
                 ]
             );
             $body = json_decode($response->getBody(), true);
-
-            return $body;
+            $response = ParsedApiServices::parse($body);
+            return $response;
         } catch (Exception $e) {
             logger('GanadevNotifAPI: Failed Send Request, Error:' . $e->getMessage());
-            return  [
-                'status' => 500,
-                'info' => 'Internal Server Error',
-                'error' => $e->getMessage(),
+            $body = [
+                'status' => false,
+                'msg' => $e->getMessage(),
             ];
+            $response = ParsedApiServices::parse($body);
+            return $response;
         }
     }
 }
