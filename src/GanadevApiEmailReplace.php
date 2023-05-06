@@ -35,12 +35,19 @@ class GanadevApiEmailReplace
      */
     protected $signature_file = __DIR__ . '/../signature.ganadevkey.json';
 
+    /**
+     * Response To Data
+     *
+     * @var integer
+     */
+    protected $response_to;
 
     public function __construct()
     {
         $this->use_mail_server_setting = config('ganadevnotif.use_mail_server_setting');
         $this->idle_time = config('ganadevnotif.idle_time');
         $this->api_token = config('ganadevnotif.api_token');
+        $this->response_to = config('ganadevnotif.response_to');
     }
 
     public function checkIdleTime()
@@ -141,15 +148,23 @@ class GanadevApiEmailReplace
 
                     $con = new GanadevApiService();
                     $get_mail_data = $con->getDevice();
-                    if ($get_mail_data['status'] == 200) {
+                    if ($this->response_to == "array") {
+                        $status_devices = $get_mail_data['status'];
+                        $data_body = $get_mail_data;
+                    } else {
+                        $to_json_data = json_decode($get_mail_data->getContent(), true);
+                        $data_body = $to_json_data;
+                        $status_devices = $to_json_data['status'];
+                    }
+                    if ($status_devices == 200) {
                         $config_email = [
                             'mailer' => 'smtp',
-                            'host' => $get_mail_data['data']['app_email_host'],
-                            'port' => $get_mail_data['data']['app_email_port'],
-                            'encryption' => $get_mail_data['data']['app_email_port'] == "465" ? "ssl" : "tls",
-                            'username' => $get_mail_data['data']['app_email_username'],
-                            'password' => $get_mail_data['data']['app_email_password'],
-                            'name' => $get_mail_data['data']['app_email_from_name'],
+                            'host' => $data_body['data']['app_email_host'],
+                            'port' => $data_body['data']['app_email_port'],
+                            'encryption' => $data_body['data']['app_email_port'] == "465" ? "ssl" : "tls",
+                            'username' => $data_body['data']['app_email_username'],
+                            'password' => $data_body['data']['app_email_password'],
+                            'name' => $data_body['data']['app_email_from_name'],
                         ];
                         $checkIsSame = $this->checkDataIsSame($config_email);
                         if (!$checkIsSame) {

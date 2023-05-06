@@ -23,3 +23,6 @@ All notable changes to `Ganadev Notif` will be documented in this file
 
 ## 2.0.2
 - Remove auto phone region code, now when use WhatsApp Endpoint, Phone number must be send with phone region code
+
+## 2.0.3 - 2.0.7
+- Bug Fixing, Add Response to Option (Json | Array).
