@@ -6,24 +6,13 @@ use Illuminate\Http\Response;
 
 class ParsedApiServices
 {
-    /**
-     * API Token
-     *
-     * @var string
-     */
-    protected $response_to;
-
-    public function __construct()
-    {
-        $this->response_to = config('ganadevnotif.response_to');
-    }
-
     public static function parse($body)
     {
         $status = $body['status'];
         $message = $body['msg'];
+        $response_to = config('ganadevnotif.response_to');
 
-        if (self::$response_to == "json") {
+        if ($response_to == "json") {
             if ($status) {
                 return response()->json(
                     [
