@@ -57,4 +57,15 @@ return [
     |
     */
     'use_mail_server_setting' => env('GANADEV_SERVER_MAIL_SETTING', true),
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ganadev Response API
+    |--------------------------------------------------------------------------
+    |
+    | By default = json, you can change the value with array | json
+    |
+    */
+    'response_to' => "json",
 ];
