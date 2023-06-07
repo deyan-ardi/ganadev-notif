@@ -26,3 +26,6 @@ All notable changes to `Ganadev Notif` will be documented in this file
 
 ## 2.0.3 - 2.0.7
 - Bug Fixing, Add Response to Option (Json | Array).
+
+## 2.0.8
+- Bug Fixing when internet is not available

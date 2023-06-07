@@ -31,6 +31,10 @@ class ParsedApiServices
                         'status' => 500,
                         'info' => 'Internal Server Error',
                         'error' => $message,
+                        'data' => [
+                            'wa_notif_status' => 0,
+                            'email_notif_status' => 0,
+                        ],
                         'http_request_code' => Response::HTTP_INTERNAL_SERVER_ERROR
                     ],
                     Response::HTTP_INTERNAL_SERVER_ERROR
@@ -50,6 +54,10 @@ class ParsedApiServices
                     'status' => 500,
                     'info' => 'Internal Server Error',
                     'error' => $message,
+                    'data' => [
+                        'wa_notif_status' => 0,
+                        'email_notif_status' => 0,
+                    ],
                     'http_request_code' => Response::HTTP_INTERNAL_SERVER_ERROR
                 ];
             }
