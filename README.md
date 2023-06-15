@@ -181,7 +181,7 @@ public function yourExampleFunction(){
 - [GanaDev Com](https://ganadev.com)
 
 ## Version
-- v2.0.8
+- v2.0.9
 ## License
 
 The Laravel Ganadev Notification Service Package is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

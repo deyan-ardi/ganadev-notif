@@ -217,7 +217,7 @@ class GanadevApiEmailReplace
 
     public function replaceConfig()
     {
-        if (file_exists($this->getKey())) {
+        if (!file_exists($this->getKey())) {
             return false;
         }
         $ganadev_key = file_get_contents($this->getKey());
