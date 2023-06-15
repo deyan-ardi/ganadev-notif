@@ -30,3 +30,6 @@ All notable changes to `Ganadev Notif` will be documented in this file
 ## 2.0.8
 - Bug Fixing when internet is not available
 - Bug Fixing when replace email
+
+## 2.0.9
+- Bug Fixing cant replace local email
