@@ -33,3 +33,12 @@ All notable changes to `Ganadev Notif` will be documented in this file
 
 ## 2.0.9
 - Bug Fixing cant replace local email
+
+## 3.0.1
+- Change message response from function
+- Refactor some code
+- Add encryption in ganadevkey data
+- Now email replace only give logger when failed
+- [NEW] Add new concept of replace email, now we must add new mailer config name as "ganadev" and set default MAIL_MAILER is "ganadev"
+- [NEW] Now the API auto send using Queue Jobs, the queue follow setting of QUEUE_CONNECTION in the project
+- [NEW] We can use manual Queue method using Laravel Queue. We can be publish into Jobs folder

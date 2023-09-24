@@ -39,5 +39,11 @@
                 "path": "config/ganadevnotif.php"
             }
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://packagist.org/packages/deyan-ardi/ganadev-notif"
+        }
+    ]
 }

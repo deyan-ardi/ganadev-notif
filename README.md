@@ -43,13 +43,12 @@ composer require deyan-ardi/ganadev-notif
 ```php
 php artisan vendor:publish --provider="DeyanArdi\GanadevNotif\GanadevServiceProvider" --tag="config"
 ```
-
 - Add this key in project `.env` file
 
 ```php
-GANADEV_SERVER_MAIL_SETTING = true
-GANADEV_NOTIF_DEVICE = "YOUR-DEVICE-SELECTED"
-GANADEV_NOTIF_TOKEN = "YOUR-API-TOKEN"
+GANADEV_REPLACE_STATUS=true
+GANADEV_NOTIF_DEVICE="<YOUR-DEVICE-SELECTED>"
+GANADEV_NOTIF_TOKEN="<YOUR-API-TOKEN>"
 ```
 
 ## How To Get API TOKEN
@@ -60,37 +59,70 @@ GANADEV_NOTIF_TOKEN = "YOUR-API-TOKEN"
 
 ## How To Register Device
 - Click Dashboad menu
-- Choose Add Devices amd fill all required form.
+- Choose Add Devices and fill all required form.
 - Connect your Device to WhatsApp by using Linked Device Feature in WhatsApp
 - By defaut WA Notif Status and Email Notif Status is Active, if disabled you cant use WhatsApp API or Email API
 - Copy the Number of Devices to your .env as GANADEV_NOTIF_DEVICE configuration
 
 ## How To Use
 
-### Integration With Auth or Email Send Method
+### Integration With Laravel Mailer
 
-When you create an email sending feature like in Laravel Auth or Laravel's default Email sending method, by default Laravel uses the `smtp` email configuration available in `config/mail.php` for sending. This means you have to add the `smtp` configuration in your application locale in order to use the email sending functionality in Laravel.
-
-This package makes it easier for you by providing overwriting options on your local configuration using the configuration you have added to the Ganadev Notification Sender API. You can enable this function by changing the `GANADEV_SERVER_MAIL_SETTING = true` configuration.
-
-That way, every time you send an email, either in Laravel Auth or Laravel's default Email sending method. Then the email configuration used is the configuration from the Ganadev Notification Sender API server. Later, if you make changes to your email configuration, you can simply change it to the Device Account on the Ganadev Notification Sender API server, so all your app that use the Device Account will be updated too. Another advantage, you no longer need to fear that your email configuration will be known by other people, because your email configuration is separate from your application.
+To integration this package with Laravel Mailer, first you must add new mailer method in `config/mail.php`
+```php
+'mailers' => [
+    // ....
+    'ganadev' => [
+            'transport' => 'smtp',
+            'host' => env('GANADEV_MAIL_HOST'),
+            'port' => env('GANADEV_MAIL_PORT'),
+            'encryption' => env('GANADEV_MAIL_ENCRYPTION'),
+            'username' => env('GANADEV_MAIL_USERNAME'),
+            'password' => env('GANADEV_MAIL_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('GANADEV_MAIL_EHLO_DOMAIN'),
+    ],
+    // ....
+]
+```
+After that, set the default MAIL_MAILER to `ganadev` and set GANADEV_REPLACE_STATUS to `true` in .env file
+```php
+MAIL_MAILER=ganadev
+GANADEV_REPLACE_STATUS=true
+```
+That way, every time you send an email using Laravel Mailer. Then the email configuration used is the configuration from the Ganadev Notification Sender API server. Later, if you make changes to your email configuration, you can simply change it on the Ganadev Notification Sender API  (https://sv1.wa-api.ganadev.com/home) server, so all your app that use the Device Account will be updated too. Another advantage, you no longer need to fear that your email configuration will be known by other people, because your email configuration is separate from your application.
 
 Finally, if you activate this function, by default this package will automatically make a request to the Ganadev Notification Sender API server every 15 minutes. This means, if later you make changes to the Device Account on the Ganadev Notification Sender API server. The change will be felt 15 minutes later. You can change the configuration in the `idle_time` configuration in the `config/ganadevnotif.php` file. We provide default options, namely requests every 15 minutes, 30 minutes, or 60 minutes.
 
-### Send Mail Message (Without Image or Other Media)
+### Integration With Laravel Queue
+By default, this package send request to API Server using Laravel Queue method used in your application QUEUE_CONNECTION setting. You can disabled it by set `must_queue` to false in `config/ganadevnotif.php`. 
+
+If you want running spesific API Function manually using Jobs, you can publish Jobs file using this command
+
+```php
+php artisan vendor:publish --provider="DeyanArdi\GanadevNotif\GanadevServiceProvider" --tag="jobs"
+```
+Now all job will be publish to Jobs folder and you can call it using Laravel Queue method. Please read documentation of Laravel Queue in https://laravel.com.
+
+### Send Mail Message Only
 
 You can send email message (without image) using methode name `sendMailMessage`, this method required 3 paramaeters `send_to`,`subject`, and `message`. Example usage :
 
 ```php
 use DeyanArdi\GanadevNotif\GanadevApi;
 
-public function yourExampleFunction(){
+public function sendingMessageText(){
     $send_to = "yourtargetemail@gmail.com";
     $subject = "Test Subject";
 
     // Using Text Message
     $message = "Text Message"
     GanadevApi::sendMailMessage($send_to, $subject, $message)
+}
+
+public function sendingWithCustomView(){
+    $send_to = "yourtargetemail@gmail.com";
+    $subject = "Test Subject";
 
     // Using Laravel Views
     $message = view('emails.exampleNotification', compact('subject','send_to'))->render(); // Your custom view with render method
@@ -107,16 +139,24 @@ Example usage :
 ```php
 use DeyanArdi\GanadevNotif\GanadevApi;
 
-public function yourExampleFunction(){
+public function sendingMessageText(){
     $send_to = "yourtargetemail@gmail.com";
     $subject = "Test Subject";
     $filename = "test.jpg"; // Filename must with file extension, support all document (docx, doc, xls, xlsx, video, audio, image, pdf dan zip)
-    $link = "https://[yourdomain]/images/test.jpg"; //example link of image or other media
+    $link = "https://[yourdomain]/images/test.jpg"; //File must be upload on server, cant support localhost
     $mime_type ="image/jpeg"; 
 
     // Using Text Message
     $message = "Text Message"
     GanadevApi::sendMailMedia($send_to, $subject, $message, $filename, $link, $mime_type);
+}
+
+public function sendingWithCustomView(){
+    $send_to = "yourtargetemail@gmail.com";
+    $subject = "Test Subject";
+    $filename = "test.jpg"; // Filename must with file extension, support all document (docx, doc, xls, xlsx, video, audio, image, pdf dan zip)
+    $link = "https://[yourdomain]/images/test.jpg"; //File must be upload on server, cant support localhost
+    $mime_type ="image/jpeg";
 
     // Using Laravel Views
     $message = view('emails.exampleNotification', compact('subject','send_to'))->render(); // Your custom view with render method
@@ -125,7 +165,7 @@ public function yourExampleFunction(){
 
 ```
 
-### Send WhatsApp Message (Without Image or Other Media)
+### Send WhatsApp Message Only
 
 You can send whatsapp message (without image) using methode name `sendWaMessage`, this method required 2 paramaeters `send_to` and `message`. Example usage :
 
@@ -147,21 +187,32 @@ You can send whatsapp media (with image or other media) using methode name `send
 ```php
 use DeyanArdi\GanadevNotif\GanadevApi;
 
-public function yourExampleFunction(){
+public function sendingImageVideo(){
+    $send_to = "6281915003004" // Must include country code
+    $type = "image" // please choose one type [image,video,audio,pdf,xls,xlsx,doc,docx,zip] 
+    $link = "https://[yourdomain]/images/test.jpg"; 
+
+    // If you choose type "image" or "video", you can add caption for message
+    $caption = "Text Message"
+    GanadevApi::sendWaMedia($send_to, $link, $type, $caption)
+}
+
+public function sendingAudio(){
+    $send_to = "6281915003004" // Must include country code
+    $type = "image" // please choose one type [image,video,audio,pdf,xls,xlsx,doc,docx,zip] 
+    $link = "https://[yourdomain]/images/test.jpg"; 
+    $ppt = true; // If you choose type "audio, you can add ppt configuration, the value is true = voice note | false = audio
+
+    GanadevApi::sendWaMedia($send_to, $link, $type, $ppt)
+}
+
+public function sendingOtherMedia(){
     $send_to = "6281915003004" // Must include country code
     $type = "image" // please choose one type [image,video,audio,pdf,xls,xlsx,doc,docx,zip] 
     $link = "https://[yourdomain]/images/test.jpg"; 
 
     // If you choose "pdf","xls","xlsx","doc","docx","zip", you can follow this
     GanadevApi::sendWaMedia($send_to, $link, $type)
-
-    // If you choose type "image" or "video", you can add caption for message
-    $caption = "Text Message"
-    GanadevApi::sendWaMedia($send_to, $link, $type, $caption)
-
-    // If you choose type "audio, you can add ppt configuration, the value is true = voice note | false = audio
-    $ppt = true; 
-    GanadevApi::sendWaMedia($send_to, $link, $type, $ppt)
 }
 
 ```
@@ -175,13 +226,23 @@ public function yourExampleFunction(){
 }
 
 ```
+### Response Structure
+By default, response of the method is `json response`, you can change it with `array` in `config/ganadevnotif.php`. This is example structure response of the method
+
+```php
+{
+    "status":200,
+    "message":"<MESSAGE API RESPONSE HERE>"
+    "data":"<DATA GET FROM SERVER API>"
+}
+```
 
 ## Contributing
 
 - [GanaDev Com](https://ganadev.com)
 
 ## Version
-- v2.0.9
+- v3.0.1
 ## License
 
 The Laravel Ganadev Notification Service Package is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

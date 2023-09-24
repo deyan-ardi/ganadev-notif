@@ -42,15 +42,51 @@ class GanadevApiEmailReplace
      */
     protected $response_to;
 
+    /**
+     * Device Id
+     *
+     * @var integer
+     */
+    protected $device_id;
+
     public function __construct()
     {
         $this->use_mail_server_setting = config('ganadevnotif.use_mail_server_setting');
         $this->idle_time = config('ganadevnotif.idle_time');
         $this->api_token = config('ganadevnotif.api_token');
         $this->response_to = config('ganadevnotif.response_to');
+        $this->device_id = config('ganadevnotif.api_device');
     }
 
-    public function checkIdleTime()
+    // ==========================================
+    // Star Auto Run Program
+    // ==========================================
+    public function run()
+    {
+        if (!isset($this->api_token)) {
+            logger('GanadevNotifReplaceEmail: MISSING API TOKEN');
+            return;
+        }
+        if (!$this->use_mail_server_setting) {
+            if ($this->getKey()) {
+                file_put_contents($this->getKey(), "");
+            }
+            logger('GanadevNotifReplaceEmail: USING USER LOCAL CONFIG, USING MAIL SERVER SETTING = FALSE');
+            return;
+        }
+        if (!$this->checkValidSignatureFile()) {
+            $this->generateAndReplace();
+        }
+
+        if (!$this->replaceConfig()) {
+            logger('GanadevNotifReplaceEmail: FAILED CHANGE LOCAL CONFIG');
+        }
+    }
+    // ==========================================
+    // End Auto Run Program
+    // ==========================================
+
+    private function checkIdleTime()
     {
         $idle_time = "+15 minutes";
         if ($this->idle_time == 30) {
@@ -62,7 +98,7 @@ class GanadevApiEmailReplace
         return $idle_time;
     }
 
-    public function removeKey()
+    private function removeKey()
     {
         if (!file_exists($this->signature_file)) {
             logger('GanadevNotifReplaceEmail: SIGNATURE FILE NOT FOUND');
@@ -74,7 +110,7 @@ class GanadevApiEmailReplace
         return false;
     }
 
-    public function getKey()
+    private function getKey()
     {
         if (!file_exists($this->signature_file)) {
             logger('GanadevNotifReplaceEmail: SIGNATURE FILE NOT FOUND');
@@ -90,7 +126,7 @@ class GanadevApiEmailReplace
         return  $key;
     }
 
-    public function generateSignatureFile()
+    private function generateSignatureFile()
     {
         if (file_exists($this->signature_file)) {
             $this->removeKey();
@@ -106,7 +142,7 @@ class GanadevApiEmailReplace
         return file_put_contents($this->signature_file, $json); // true on success
     }
 
-    public function checkValidSignatureFile()
+    private function checkValidSignatureFile()
     {
         if (!file_exists($this->signature_file)) {
             logger('GanadevNotifReplaceEmail: SIGNATURE FILE NOT FOUND');
@@ -130,8 +166,7 @@ class GanadevApiEmailReplace
             logger('GanadevNotifReplaceEmail: KEY FILE NOT FOUND');
             return false;
         }
-        $ganadev_key = file_get_contents($this->getKey());
-        $array = json_decode($ganadev_key, true);
+        $array = $this->decryptData();
         if (empty($array)) {
             logger('GanadevNotifReplaceEmail: INVALID KEY FILE');
             return false;
@@ -139,73 +174,47 @@ class GanadevApiEmailReplace
         return true;
     }
 
-
-    public function run()
+    private function generateAndReplace()
     {
-        if (!isset($this->api_token)) {
-            logger('GanadevNotifReplaceEmail: MISSING API TOKEN');
-            return;
-        }
-        if (!$this->use_mail_server_setting) {
-            if ($this->getKey()) {
-                file_put_contents($this->getKey(), "");
-            }
-            logger('GanadevNotifReplaceEmail: USING USER LOCAL CONFIG, USING MAIL SERVER SETTING = FALSE');
-            return;
-        }
-        if ($this->checkValidSignatureFile()) {
-            if ($this->replaceConfig()) {
-                logger('GanadevNotifReplaceEmail: SUCCESS CHANGE LOCAL CONFIG');
-            } else {
-                logger('GanadevNotifReplaceEmail: FAILED CHANGE LOCAL CONFIG');
-            }
+        $this->generateSignatureFile();
+        $con = new GanadevApiService();
+        $get_mail_data = $con->getDevice();
+        if ($this->response_to == "array") {
+            $status_devices = $get_mail_data['status'];
+            $data_body = $get_mail_data;
         } else {
-            $this->generateSignatureFile();
-            $con = new GanadevApiService();
-            $get_mail_data = $con->getDevice();
-            if ($this->response_to == "array") {
-                $status_devices = $get_mail_data['status'];
-                $data_body = $get_mail_data;
-            } else {
-                $to_json_data = json_decode($get_mail_data->getContent(), true);
-                $data_body = $to_json_data;
-                $status_devices = $to_json_data['status'];
-            }
-            if ($status_devices == 200) {
-                $config_email = [
-                    'mailer' => 'smtp',
-                    'host' => $data_body['data']['app_email_host'],
-                    'port' => $data_body['data']['app_email_port'],
-                    'encryption' => $data_body['data']['app_email_port'] == "465" ? "ssl" : "tls",
-                    'username' => $data_body['data']['app_email_username'],
-                    'password' => $data_body['data']['app_email_password'],
-                    'name' => $data_body['data']['app_email_from_name'],
-                ];
-                $checkIsSame = $this->checkDataIsSame($config_email);
-                if (!$checkIsSame) {
-                    file_put_contents($this->getKey(), "");
-                    $json = json_encode($config_email);
-                    file_put_contents($this->getKey(), $json);
-                }
-
-                $replaceConfig = $this->replaceConfig();
-                if ($replaceConfig) {
-                    logger('GanadevNotifReplaceEmail: SUCCESS CHANGE LOCAL CONFIG');
-                } else {
-                    logger('GanadevNotifReplaceEmail: FAILED CHANGE LOCAL CONFIG');
-                }
+            $to_json_data = json_decode($get_mail_data->getContent(), true);
+            $data_body = $to_json_data;
+            $status_devices = $to_json_data['status'];
+        }
+        if ($status_devices == 200) {
+            $config_email = [
+                'mailer' => 'smtp',
+                'host' => $data_body['data']['app_email_host'],
+                'port' => $data_body['data']['app_email_port'],
+                'encryption' => $data_body['data']['app_email_port'] == "465" ? "ssl" : "tls",
+                'username' => $data_body['data']['app_email_username'],
+                'password' => $data_body['data']['app_email_password'],
+                'name' => $data_body['data']['app_email_from_name'],
+            ];
+            $checkIsSame = $this->checkDataIsSame($config_email);
+            if (!$checkIsSame) {
+                file_put_contents($this->getKey(), "");
+                $json = json_encode($config_email);
+                $encrypt = $this->encryptData($json);
+                file_put_contents($this->getKey(), $encrypt);
             }
         }
     }
 
-    public function checkDataIsSame($data)
+    private function checkDataIsSame($data)
     {
         if (!file_exists($this->getKey())) {
             return false;
         }
-        $ganadev_key = file_get_contents($this->getKey());
-        $array = json_decode($ganadev_key, true);
-        if(empty($array)) {
+
+        $array = $this->decryptData();
+        if (empty($array)) {
             return false;
         }
         if ($array['mailer'] == $data['mailer'] && $array['host'] == $data['host'] && $array['port'] == $data['port'] && $array['encryption'] == $data['encryption'] && $array['username'] == $data['username'] && $array['password'] == $data['password'] && $array['name'] == $data['name']) {
@@ -215,24 +224,66 @@ class GanadevApiEmailReplace
         }
     }
 
-    public function replaceConfig()
+    // ==========================================
+    // Start Replace Configuration
+    // ==========================================
+    private function replaceConfig()
     {
         if (!file_exists($this->getKey())) {
             return false;
         }
-        $ganadev_key = file_get_contents($this->getKey());
-        $array = json_decode($ganadev_key, true);
+
+        $array = $this->decryptData();
         if (empty($array)) {
             return false;
         }
-        Config::set('mail.mailers.smtp.transport', $array['mailer']);
-        Config::set('mail.mailers.smtp.host', $array['host']);
-        Config::set('mail.mailers.smtp.port', $array['port']);
-        Config::set('mail.mailers.smtp.encryption', $array['encryption']);
-        Config::set('mail.mailers.smtp.username', $array['username']);
-        Config::set('mail.mailers.smtp.password', $array['password']);
+
+        Config::set('mail.mailers.ganadev.transport', $array['mailer']);
+        Config::set('mail.mailers.ganadev.host', $array['host']);
+        Config::set('mail.mailers.ganadev.port', $array['port']);
+        Config::set('mail.mailers.ganadev.encryption', $array['encryption']);
+        Config::set('mail.mailers.ganadev.username', $array['username']);
+        Config::set('mail.mailers.ganadev.password', $array['password']);
         Config::set('mail.from.address', $array['username']);
         Config::set('mail.from.name', $array['name']);
+        
         return true;
     }
+    // ==========================================
+    // End Replace Configuration
+    // ==========================================
+
+    // ==========================================
+    // Start Encryption Data For Security 
+    // ==========================================
+    private function getSecretKey()
+    {
+        return $this->device_id . $this->api_token;
+    }
+
+    private function encryptData($responseData)
+    {
+        $key = $this->getSecretKey();
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+        $encryptedData = openssl_encrypt($responseData, 'aes-256-cbc', $key, 0, $iv);
+        return base64_encode($iv . $encryptedData);
+    }
+
+    private function decryptData()
+    {
+        $key = $this->getSecretKey();
+        $encryptedData = file_get_contents($this->getKey());
+
+        $decodedData = base64_decode($encryptedData);
+        $ivSize = openssl_cipher_iv_length('aes-256-cbc');
+        $iv = substr($decodedData, 0, $ivSize);
+        $encryptedDataWithoutIv = substr($decodedData, $ivSize);
+        $decryptedData = openssl_decrypt($encryptedDataWithoutIv, 'aes-256-cbc', $key, 0, $iv);
+        $decodeJson = json_decode($decryptedData, true);
+
+        return $decodeJson;
+    }
+    // ==========================================
+    // End Encryption Data For Security 
+    // ==========================================
 }
