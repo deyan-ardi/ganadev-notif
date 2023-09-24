@@ -56,7 +56,7 @@ return [
     | This will be useful if you want to using local email configuration.
     |
     */
-    'use_mail_server_setting' => env('GANADEV_SERVER_MAIL_SETTING', true),
+    'use_mail_server_setting' => env('GANADEV_REPLACE_STATUS', true),
 
 
     /*
@@ -68,4 +68,16 @@ return [
     |
     */
     'response_to' => "json",
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ganadev Must Queue
+    |--------------------------------------------------------------------------
+    |
+    | By default = true, you can use default laravel queue configuration
+    | Documentation can found here https://laravel.com/docs/10.x/queues.
+    | This setting follow config name QUEUE_CONNECTION in your project.
+    |
+    */
+    'must_queue' => false,
 ];
